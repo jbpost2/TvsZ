@@ -26,19 +26,20 @@ shinyServer(function(input, output, session) {
     if(!input$prob) { 
       #add nothing
     } else { #add shading
-      if(input$probType == "Less"){
+      print(input$probL)
+      if(input$probType == "Less" & !is.na(input$probL)){
         shortseq <- seq(from = -6, to = input$probL, length = 10000)
         polygon(c(shortseq, rev(shortseq)), c(rep(0, length(shortseq)), rev(dnorm(shortseq))),
                 col = rgb(0.3, 0.1, 0.5, 0.3))
         polygon(c(shortseq, rev(shortseq)), c(rep(0, length(shortseq)), rev(dt(shortseq, df))),
                 col = rgb(0.7, 0.1, 0.5, 0.3))
-      } else if(input$probType == "Greater") {
+      } else if(input$probType == "Greater" & !is.na(input$probU)) {
         shortseq <- seq(from = input$probU, to = 6, length = 10000)
         polygon(c(shortseq, rev(shortseq)), c(rep(0, length(shortseq)), rev(dnorm(shortseq))),
                 col = rgb(0.3, 0.1, 0.5, 0.3))
         polygon(c(shortseq, rev(shortseq)), c(rep(0, length(shortseq)), rev(dt(shortseq, df))),
                 col = rgb(0.7, 0.1, 0.5, 0.3))
-      } else {
+      } else if(input$probType == "Between" & !is.na(input$probLB) & !is.na(input$probUB)){
         shortseq <- seq(from = input$probLB, to = input$probUB, length = 10000)
         polygon(c(shortseq, rev(shortseq)), c(rep(0, length(shortseq)), rev(dnorm(shortseq))),
                 col = rgb(0.3, 0.1, 0.5, 0.3))
@@ -62,23 +63,23 @@ shinyServer(function(input, output, session) {
         tprob <- round(pt(input$probL, df), 6)
         zprob <- round(pnorm(input$probL), 6)
         
-        #output
-        t <- paste("P\\left(Z\\leq", input$probL, "\\right) = ", zprob,
-              "\n P\\left(T", df, "df \\leq", input$probL, "\\right) = ", tprob)
+        #output (must call withMathJax() on this since it is rendered dynamically: https://shiny.rstudio.com/gallery/mathjax.html)
+        t <- withMathJax(paste("$$P\\left(Z\\leq", input$probL, "\\right) = ", zprob,
+              "$$$$ P\\left(T_{", df, "} \\leq", input$probL, "\\right) = ", tprob, "$$"))
       } else if(input$probType == "Greater") {
         tprob <- round(pt(input$probU, df, lower.tail = FALSE), 6)
         zprob <- round(pnorm(input$probU, lower.tail = FALSE), 6)
         
         #output
-        t <- paste("P\\left(Z\\geq", input$probU, "\\right) = ", zprob,
-          "\n P\\left(T", df, "df \\geq", input$probU, "\\right) = ", tprob)
+        t <- withMathJax(paste("$$P\\left(Z\\geq", input$probU, "\\right) = ", zprob,
+          "$$$$ P\\left(T_{", df, "} \\geq", input$probU, "\\right) = ", tprob, "$$"))
       } else {
         tprob <- round(pt(input$probUB, df) - pt(input$probLB, df), 6)
         zprob <- round(pnorm(input$probUB) - pnorm(input$probLB), 6)
         
         #output
-        t <- paste("P\\left(", input$probLB, "\\leq Z\\leq", input$probUB, "\\right) = ", zprob, 
-              "\n P\\left(", input$probLB, "\\leq T", df, "df \\leq", input$probUB, "\\right) = ", tprob)
+        t <- withMathJax(paste("$$P\\left(", input$probLB, "\\leq Z\\leq", input$probUB, "\\right) = ", zprob, 
+              "$$$$ P\\left(", input$probLB, "\\leq T_{", df, "} \\leq", input$probUB, "\\right) = ", tprob, "$$"))
       }
     }
     tagList(withMathJax(), t)

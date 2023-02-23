@@ -63,12 +63,12 @@ dashboardPage(skin="red",
                 conditionalPanel('input.prob', 
                                  radioButtons("probType", label = "Type of Calculation", list("Less than (or equal)" = "Less", "Between" = "Between", "Greater than (or equal)" = "Greater")),
                                  conditionalPanel('input.probType == "Less"',
-                                                 numericInput("probL", "Lower limit", value = 0, step = 0.1)),
+                                                 numericInput("probL", "Value", value = 0, step = 0.1)),
                                  conditionalPanel('input.probType == "Between"',
-                                                 numericInput("probLB", "Lower limit", value = -1, step = 0.1),
-                                                 numericInput("probUB", "Upper limit", value = 1, step = 0.1)),
+                                                 numericInput("probLB", "Lower endpoint", value = -1, step = 0.1),
+                                                 numericInput("probUB", "Upper endpoint", value = 1, step = 0.1)),
                                  conditionalPanel('input.probType == "Greater"',
-                                                 numericInput("probU", "Upper limit", value = 0, step = 0.1))
+                                                 numericInput("probU", "Value", value = 0, step = 0.1))
                 )
             )
           ),
